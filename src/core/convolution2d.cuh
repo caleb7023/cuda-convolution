@@ -5,7 +5,13 @@
 
 
 
-__global__ void convolution2D_channel_cuda(float *input, float *kernel, float *output, int ic, int kc, int isx, int isy, int ksx, int ksy, int sx, int sy, int px, int py, int osx, int osy){
+
+extern "C" {
+    void convolution2d_forward(float *input, float *output, float *kernels, int input_channels, int kernel_channels, int input_size_x, int input_size_y, int kernel_size_x, int kernel_size_y, int stride_x, int stride_y, int padding_x, int padding_y);
+}
+
+
+__global__ void convolution2d_channel_cuda(float *input, float *kernel, float *output, int ic, int kc, int isx, int isy, int ksx, int ksy, int sx, int sy, int px, int py, int osx, int osy){
     
     /**
      * input: input image
@@ -49,7 +55,7 @@ __global__ void convolution2D_channel_cuda(float *input, float *kernel, float *o
 }
 
 
-__host__ void convolution2D_forward(float *input, float *output, float *kernels, int input_channels, int kernel_channels, int input_size_x, int input_size_y, int kernel_size_x, int kernel_size_y, int stride_x, int stride_y, int padding_x, int padding_y){
+__host__ void convolution2d_forward(float *input, float *output, float *kernels, int input_channels, int kernel_channels, int input_size_x, int input_size_y, int kernel_size_x, int kernel_size_y, int stride_x, int stride_y, int padding_x, int padding_y){
 
     /**
      * The input size does not include the channel size
@@ -69,7 +75,7 @@ __host__ void convolution2D_forward(float *input, float *output, float *kernels,
     output_size_x = floorf((input_size_x - kernel_size_x + padding_x*2) / stride_x) + 1;
     output_size_y = floorf((input_size_y - kernel_size_y + padding_y*2) / stride_y) + 1;
 
-    convolution2D_channel_cuda<<<kernel_channels*output_size_x*output_size_y, channels*output_size_x*output_size_y>>>(
+    convolution2d_channel_cuda<<<kernel_channels*output_size_x*output_size_y, channels*output_size_x*output_size_y>>>(
         input_cuda,
         kernel_cuda,
         output_cuda,

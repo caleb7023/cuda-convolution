@@ -5,6 +5,12 @@
 
 
 
+
+extern "C" {
+    void convolution_forward(float *input, float *output, float *kernels, int *input_dim_size, int *kernel_dim_size, int channels, int input_size, int kernel_size);
+}
+
+
 __global__ void convolution_channel_cuda(float *input, float *kernel, float *output, , int *input_dim_size, int *kernel_dim_size, int input_size, int kernel_size){
 
     int channel =  blockIdx.x;
