@@ -6,25 +6,35 @@
 #include <stdio.h>
 
 
-__global__ void convolution2d_channel(float *input, float *kernel, float *output, int ic, int kc, int isx, int isy, int ksx, int ksy, int sx, int sy, int px, int py, int osx, int osy){
-    
-    /**
-     * input: input image
-     * kernel: kernel
-     * output: output image
-     * ic: input channels
-     * kc: kernel channels
-     * isx: input size x
-     * isy: input size y
-     * ksx: kernel size x
-     * ksy: kernel size y
-     * sx: stride x
-     * sy: stride y
-     * px: padding x
-     * py: padding y
-     * osx: output size x
-     * osy: output size y
-     */
+/**
+ * @brief This is the kernel function for the convolution operation.
+ *
+ * @param input: input image
+ * @param kernel: kernel
+ * @param output: output image
+ * @param ic: input channels
+ * @param kc: kernel channels
+ * @param isx: input size x
+ * @param isy: input size y
+ * @param ksx: kernel size x
+ * @param ksy: kernel size y
+ * @param sx: stride x
+ * @param sy: stride y
+ * @param px: padding x
+ * @param py: padding y
+ * @param osx: output size x
+ * @param osy: output size y
+ */
+__global__ void convolution2d_channel(
+    float *input, float *kernel, float *output,
+    int ic , int kc ,
+    int isx, int isy,
+    int ksx, int ksy,
+    int osx, int osy,
+    int sx , int sy ,
+    int px , int py
+)
+{
     
     int kx_ = threadIdx.x; // kernel x position
     int ky_ = threadIdx.y; // kernel y position
@@ -50,6 +60,7 @@ __global__ void convolution2d_channel(float *input, float *kernel, float *output
              input [ic_*isx*isy + ix *isx + iy ] * kernel[kc_*ic*ksx*ksy + ic_*ksx*ksy + kx_*ksx + ky_]
         );
     }
+
 }
 
 
@@ -77,7 +88,15 @@ __global__ void convolution2d_channel(float *input, float *kernel, float *output
  * @param padding_y The padding in the y direction.
  *
  */
-void convolution2d(float *input, float *output, float *kernels, int input_channels, int kernel_channels, int input_size_x, int input_size_y, int kernel_size_x, int kernel_size_y, int stride_x, int stride_y, int padding_x, int padding_y){
+void convolution2d(
+    float *input, float *output, float *kernels,
+    int input_channels, int kernel_channels,
+    int input_size_x  , int input_size_y   ,
+    int kernel_size_x , int kernel_size_y  ,
+    int stride_x      , int stride_y       ,
+    int padding_x     , int padding_y
+)
+{
 
     float *input_cuda, *kernel_cuda, *output_cuda;
 
@@ -92,21 +111,13 @@ void convolution2d(float *input, float *output, float *kernels, int input_channe
     cudaMemcpy(kernel_cuda, kernels,  kernel_channels * input_channels * kernel_size_x * kernel_size_y * sizeof(float), cudaMemcpyHostToDevice);
 
     convolution2d_channel<<<dim3(output_size_x, output_size_y, kernel_channels), dim3(kernel_size_x, kernel_size_y, input_channels)>>>(
-        input_cuda,
-        kernel_cuda,
-        output_cuda,
-        input_channels,
-        kernel_channels,
-        input_size_x,
-        input_size_y,
-        kernel_size_x,
-        kernel_size_y,
-        stride_x+1,
-        stride_y+1,
-        padding_x,
-        padding_y,
-        output_size_x,
-        output_size_y
+        input_cuda    , kernel_cuda    , output_cuda,
+        input_channels, kernel_channels,
+        input_size_x , input_size_y   ,
+        kernel_size_x , kernel_size_y,
+        output_size_x , output_size_y,
+        stride_x+1    , stride_y+1   ,
+        padding_x     , padding_y
     );
 
     cudaMemcpy(output, output_cuda, kernel_channels * output_size_x * output_size_y * sizeof(float), cudaMemcpyDeviceToHost);
@@ -114,4 +125,5 @@ void convolution2d(float *input, float *output, float *kernels, int input_channe
     cudaFree( input_cuda);
     cudaFree(output_cuda);
     cudaFree(kernel_cuda);
+
 }

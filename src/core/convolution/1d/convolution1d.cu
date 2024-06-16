@@ -5,21 +5,27 @@
 
 #include <stdio.h>
 
-
-__global__ void convolution1d_channel(float *input, float *kernel, float *output, int ic, int kc, int is, int ks, int s, int p, int os){
-    
-    /**
-     * input: input image
-     * kernel: kernel
-     * output: output image
-     * ic: input channels
-     * kc: kernel channels
-     * is: input size
-     * ks: kernel size
-     * s: stride
-     * p: padding
-     * os: output size
-     */
+/**
+ * @brief This is the kernel function for the convolution operation.
+ *
+ * @param input: input image
+ * @param kernel: kernel
+ * @param output: output image
+ * @param ic: input channels
+ * @param kc: kernel channels
+ * @param is: input size
+ * @param ks: kernel size
+ * @param s: stride
+ * @param p: padding
+ * @param os: output size
+ */
+__global__ void convolution1d_channel(
+    float *input, float *kernel, float *output,
+    int ic, int kc,
+    int is, int ks, int os,
+    int s , int p
+)
+{
     
     int  k_ = threadIdx.x; // kernel position
     int ic_ = threadIdx.y; // input channel
@@ -36,6 +42,7 @@ __global__ void convolution1d_channel(float *input, float *kernel, float *output
     {
         atomicAdd(&output[kc_*os + o_], input[ic_*is + i] * kernel[kc_*ks + k_]);
     }
+
 }
 
 
@@ -60,7 +67,13 @@ __global__ void convolution1d_channel(float *input, float *kernel, float *output
  * @param padding The padding.
  *
  */
-void convolution1d(float *input, float *output, float *kernels, int input_channels, int kernel_channels, int input_size, int kernel_size, int stride, int padding){
+void convolution1d(
+    float *input, float *output, float *kernels,
+    int input_channels, int kernel_channels,
+    int input_size    , int kernel_size,
+    int stride        , int padding
+)
+{
 
     float *input_cuda, *kernel_cuda, *output_cuda;
 
@@ -74,16 +87,10 @@ void convolution1d(float *input, float *output, float *kernels, int input_channe
     cudaMemcpy(kernel_cuda, kernels,  kernel_channels * input_channels * kernel_size * sizeof(float), cudaMemcpyHostToDevice);
 
     convolution1d_channel<<<dim3(output_size, kernel_channels), dim3(kernel_size, input_channels)>>>(
-        input_cuda,
-        kernel_cuda,
-        output_cuda,
-        input_channels,
-        kernel_channels,
-        input_size,
-        kernel_size,
-        stride+1,
-        padding,
-        output_size
+        input_cuda    , kernel_cuda    , output_cuda,
+        input_channels, kernel_channels,
+        input_size    , kernel_size    , output_size,
+        stride+1      , padding
     );
 
     cudaMemcpy(output, output_cuda, kernel_channels * output_size * sizeof(float), cudaMemcpyDeviceToHost);
@@ -91,4 +98,5 @@ void convolution1d(float *input, float *output, float *kernels, int input_channe
     cudaFree( input_cuda);
     cudaFree(output_cuda);
     cudaFree(kernel_cuda);
+
 }
