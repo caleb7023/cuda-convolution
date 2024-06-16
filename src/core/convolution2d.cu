@@ -37,15 +37,18 @@ __global__ void convolution2d_channel(float *input, float *kernel, float *output
     int iy = oy_-py + ky_*sy; // input y position
 
     if (kc_ < kc  && // kernel channel
-        oy_ < osx && // target y position in the input
-        ox_ < osy && // target x position in the input
+        oy_ < osy && // target y position in the input
+        ox_ < osx && // target x position in the input
         ic_ < ic  && // input channel
         ky_ < ksy && // kernel y position
         kx_ < ksx && // kernel x position
         0<=ix && ix<isx && // check if the input x position is valid
         0<=iy && iy<isy   )// check if the input y position is valid
     {
-        atomicAdd(&output[kc_*osx*osy + ox_*osx + oy_], input[ic_*isx*isy + ix*isx + iy] * kernel[kc_*ksx*ksy + kx_*ksx + ky_]);
+        atomicAdd(
+            &output[kc_*osx*osy + ox_*osx + oy_],
+             input [ic_*isx*isy + ix *isx + iy ] * kernel[kc_*ic*ksx*ksy + ic_*ksx*ksy + kx_*ksx + ky_]
+        );
     }
 }
 
@@ -57,7 +60,6 @@ __global__ void convolution2d_channel(float *input, float *kernel, float *output
  *
  * The input size does not include the channel size
  * The kernel size does not include the channel size too
- * input, output and kernels are 1D arrays
  *
  *
  * @param input The input image.
