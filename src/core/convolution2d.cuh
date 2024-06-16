@@ -1,39 +1,12 @@
 
 // author: caleb7023
 
+#ifndef CONVOLUTION2D_CUH
+#define CONVOLUTION2D_CUH
+
 #include <cuda_runtime.h>
 
 
-
-
-extern "C" {
-
-    /**
-     * @brief Performs a convolution operation on the input image.
-     *
-     * The input size does not include the channel size
-     * The kernel size does not include the channel size too
-     * input, output and kernels are 1D arrays
-     *
-     *
-     * @param input The input image.
-     * @param output The output image.
-     * @param kernels The convolution kernels.
-     * @param input_channels The number of channels in the input image.
-     * @param kernel_channels The number of channels in the kernels.
-     * @param input_size_x The width of the input image.
-     * @param input_size_y The height of the input image.
-     * @param kernel_size_x The width of the kernels.
-     * @param kernel_size_y The height of the kernels.
-     * @param stride_x The stride in the x direction.
-     * @param stride_y The stride in the y direction.
-     * @param padding_x The padding in the x direction.
-     * @param padding_y The padding in the y direction.
-     *
-     */
-    void convolution2d(float *input, float *output, float *kernels, int input_channels, int kernel_channels, int input_size_x, int input_size_y, int kernel_size_x, int kernel_size_y, int stride_x, int stride_y, int padding_x, int padding_y);
-    
-}
 
 
 __global__ void convolution2d_channel(float *input, float *kernel, float *output, int ic, int kc, int isx, int isy, int ksx, int ksy, int sx, int sy, int px, int py, int osx, int osy){
@@ -81,6 +54,29 @@ __global__ void convolution2d_channel(float *input, float *kernel, float *output
 
 
 
+/**
+ * @brief Performs a convolution operation on the input image.
+ *
+ * The input size does not include the channel size
+ * The kernel size does not include the channel size too
+ * input, output and kernels are 1D arrays
+ *
+ *
+ * @param input The input image.
+ * @param output The output image.
+ * @param kernels The convolution kernels.
+ * @param input_channels The number of channels in the input image.
+ * @param kernel_channels The number of channels in the kernels.
+ * @param input_size_x The width of the input image.
+ * @param input_size_y The height of the input image.
+ * @param kernel_size_x The width of the kernels.
+ * @param kernel_size_y The height of the kernels.
+ * @param stride_x The stride in the x direction.
+ * @param stride_y The stride in the y direction.
+ * @param padding_x The padding in the x direction.
+ * @param padding_y The padding in the y direction.
+ *
+ */
 __host__ void convolution2d(float *input, float *output, float *kernels, int input_channels, int kernel_channels, int input_size_x, int input_size_y, int kernel_size_x, int kernel_size_y, int stride_x, int stride_y, int padding_x, int padding_y){
 
     float *input_cuda, *kernel_cuda, *output_cuda;
@@ -95,7 +91,7 @@ __host__ void convolution2d(float *input, float *output, float *kernels, int inp
     cudaMemcpy( input_cuda,   input,                    input_channels *  input_size_x *  input_size_y * sizeof(float), cudaMemcpyHostToDevice);
     cudaMemcpy(kernel_cuda, kernels,  kernel_channels * input_channels * kernel_size_x * kernel_size_y * sizeof(float), cudaMemcpyHostToDevice);
 
-    convolution2d_channel<<<kernel_channels * output_size_x * output_size_y, channels * output_size_x * output_size_y>>>(
+    convolution2d_channel<<<dim3(kernel_channels, output_size_x, output_size_y), dim3(kernel_channels, kernel_size_x, kernel_size_y)>>>(
         input_cuda,
         kernel_cuda,
         output_cuda,
@@ -119,3 +115,5 @@ __host__ void convolution2d(float *input, float *output, float *kernels, int inp
     cudaFree(output_cuda);
     cudaFree(kernel_cuda);
 }
+
+#endif
