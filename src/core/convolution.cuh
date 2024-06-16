@@ -1,5 +1,5 @@
 
-// author:caleb7023
+// author: caleb7023
 
 #include <cuda_runtime.h>
 
@@ -7,7 +7,7 @@
 
 
 extern "C" {
-    void convolution_forward(float *input, float *output, float *kernels, int *input_dim_size, int *kernel_dim_size, int channels, int input_size, int kernel_size);
+    void convolution(float *input, float *output, float *kernels, int *input_dim_size, int *kernel_dim_size, int channels, int input_size, int kernel_size);
 }
 
 
@@ -21,7 +21,7 @@ __global__ void convolution_channel_cuda(float *input, float *kernel, float *out
 }
 
 
-__host__ void convolution_forward(float *input, float *output, float *kernels, int *input_dim_size, int *kernel_dim_size, int channels, int input_size, int kernel_size){
+__host__ void convolution(float *input, float *output, float *kernels, int *input_dim_size, int *kernel_dim_size, int channels, int input_size, int kernel_size){
 
     /**
      * The input size does not include the channel size
