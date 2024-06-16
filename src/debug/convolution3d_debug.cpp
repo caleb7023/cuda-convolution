@@ -9,7 +9,7 @@
 
 int main() {
 
-    float inputs[3*5*5*5] = {
+    float inputs[2*5*5*5] = {
 
         // channel 1
             // z 1
@@ -85,7 +85,7 @@ int main() {
 
     };
 
-    float kernels[2*3*3*3*3] = {
+    float kernels[2*2*3*3*3] = {
         // channel 1
             // kernel channel 1
                 // z 1
@@ -101,19 +101,6 @@ int main() {
                     0, 1, 0,
                     1, 0, 1,
             // kernel channel 2
-                // z 1
-                    1, 0, 1,
-                    0, 1, 0,
-                    1, 0, 1,
-                // z 2
-                    1, 0, 1,
-                    0, 1, 0,
-                    1, 0, 1,
-                // z 3
-                    1, 0, 1,
-                    0, 1, 0,
-                    1, 0, 1,
-            // kernel channel 3
                 // z 1
                     1, 0, 1,
                     0, 1, 0,
@@ -154,24 +141,11 @@ int main() {
                     1, 0, 1,
                     1, 0, 1,
                     1, 0, 1,
-            // kernel channel 3
-                // z 1
-                    1, 0, 1,
-                    1, 0, 1,
-                    1, 0, 1,
-                // z 2
-                    1, 0, 1,
-                    1, 0, 1,
-                    1, 0, 1,
-                // z 3
-                    1, 0, 1,
-                    1, 0, 1,
-                    1, 0, 1,
     };
 
     float output[2*3*3*3];
 
-    convolution3d(inputs, output, kernels, 3, 2, 5, 5, 5, 3, 3, 3, 0, 0, 0, 0, 0, 0);
+    convolution3d(inputs, output, kernels, 2, 2, 5, 5, 5, 3, 3, 3, 0, 0, 0, 0, 0, 0);
 
     for (int i = 0; i < 2*3*3*3; i++) {
         printf("%i:%f\n", i+1, output[i]);
