@@ -1,16 +1,10 @@
 
 // author: caleb7023
 
-#include "../core/convolution2d.cuh"
 #include <cuda_runtime.h>
 #include <stdio.h>
+#include "../core/convolution2d.cuh"
 
-
-extern "C++" {
-    void convolution2d(float *input, float *output, float *kernels, int input_channels,
-                       int kernel_channels, int input_size_x,int input_size_y, int kernel_size_x,
-                       int kernel_size_y, int stride_x, int stride_y, int padding_x, int padding_y);
-}
 
 
 int main() {
@@ -60,7 +54,7 @@ int main() {
     convolution2d(inputs, output, kernels, 3, 1, 5, 5, 3, 3, 0, 0, 0, 0);
 
     for (int i = 0; i < 9; i++) {
-        printf("%f\n", output[i]);
+        printf("%i:%f\n", i+1, output[i]);
     }
 
     return 0;
