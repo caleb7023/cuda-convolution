@@ -21,15 +21,15 @@
  * @param ksx: kernel size x
  * @param ksy: kernel size y
  * @param ksz: kernel size z
+ * @param osx: output size x
+ * @param osy: output size y
+ * @param osz: output size z
  * @param sx: stride x
  * @param sy: stride y
  * @param sz: stride z
  * @param px: padding x
  * @param py: padding y
  * @param pz: padding z
- * @param osx: output size x
- * @param osy: output size y
- * @param osz: output size z
  */
 __global__ void convolution3d_channel(
     float *input, float *kernel, float *output,
