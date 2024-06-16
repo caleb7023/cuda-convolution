@@ -48,7 +48,6 @@ __global__ void convolution1d_channel(float *input, float *kernel, float *output
  * The kernel size does not include the channel size too
  * input, output and kernels are 1D arrays
  *
- * 
  *
  * @param input The input array.
  * @param output The output array.
@@ -71,10 +70,10 @@ void convolution1d(float *input, float *output, float *kernels, int input_channe
     cudaMalloc(&kernel_cuda,  kernel_channels * input_channels * kernel_size * sizeof(float));
     cudaMalloc(&output_cuda,  kernel_channels *                  output_size * sizeof(float));
 
-    cudaMemcpy( input_cuda,   input,                    input_channels *  input_size_x *  input_size_y * sizeof(float), cudaMemcpyHostToDevice);
-    cudaMemcpy(kernel_cuda, kernels,  kernel_channels * input_channels * kernel_size_x * kernel_size_y * sizeof(float), cudaMemcpyHostToDevice);
+    cudaMemcpy( input_cuda,   input,                    input_channels *  input_size * sizeof(float), cudaMemcpyHostToDevice);
+    cudaMemcpy(kernel_cuda, kernels,  kernel_channels * input_channels * kernel_size * sizeof(float), cudaMemcpyHostToDevice);
 
-    convolution2d_channel<<<dim3(output_size, kernel_channels), dim3(kernel_size, input_channels)>>>(
+    convolution1d_channel<<<dim3(output_size, kernel_channels), dim3(kernel_size, input_channels)>>>(
         input_cuda,
         kernel_cuda,
         output_cuda,
@@ -84,7 +83,7 @@ void convolution1d(float *input, float *output, float *kernels, int input_channe
         kernel_size,
         stride+1,
         padding,
-        output_size,
+        output_size
     );
 
     cudaMemcpy(output, output_cuda, kernel_channels * output_size * sizeof(float), cudaMemcpyDeviceToHost);

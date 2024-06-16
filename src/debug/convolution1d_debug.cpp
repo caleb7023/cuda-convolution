@@ -3,7 +3,7 @@
 
 #include <cuda_runtime.h>
 #include <stdio.h>
-#include "../core/convolution1d.cuh"
+#include "../core/convolution/1d/convolution1d.cuh"
 
 
 
@@ -24,23 +24,23 @@ int main() {
     float kernels[2*3*3] = {
         // channel 1
             // kernel channel 1
-            1, 0, 1
+            1, 0, 1,
             // kernel channel 2
-            1, 0, 1
+            1, 0, 1,
             // kernel channel 3
-            1, 0, 1
+            1, 0, 1,
         // channel 2
             // kernel channel 1
-            1, 0, 1
+            1, .5, 0,
             // kernel channel 2
-            1, 0, 1
+            1, .5, 0,
             // kernel channel 3
-            1, 0, 1
+            1, .5, 0,
     };
 
     float output[2*23];
 
-    convolution1d(inputs, output, kernels, 3, 1, 25, 3, 0, 0);
+    convolution1d(inputs, output, kernels, 3, 2, 25, 3, 0, 0);
 
     for (int i = 0; i < 2*23; i++) {
         printf("%i:%f\n", i+1, output[i]);

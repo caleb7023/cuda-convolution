@@ -3,7 +3,7 @@
 
 #include <cuda_runtime.h>
 #include <stdio.h>
-#include "../core/convolution2d.cuh"
+#include "../core/convolution/2d/convolution2d.cuh"
 
 
 
