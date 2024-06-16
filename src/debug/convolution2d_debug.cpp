@@ -9,7 +9,7 @@
 
 int main() {
 
-    float inputs[5*5*3] = {
+    float inputs[3*5*5] = {
         // channel 1
         1 , 2 , 3 , 4 , 5 ,
         6 , 7 , 8 , 9 , 10,
@@ -49,7 +49,7 @@ int main() {
             1, 0, 1,
     };
 
-    float output[3*3];
+    float output[1*3*3];
 
     convolution2d(inputs, output, kernels, 3, 1, 5, 5, 3, 3, 0, 0, 0, 0);
 

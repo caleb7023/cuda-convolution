@@ -3,7 +3,7 @@
 
 #include <cuda_runtime.h>
 
-
+#include <stdio.h>
 
 
 __global__ void convolution2d_channel(float *input, float *kernel, float *output, int ic, int kc, int isx, int isy, int ksx, int ksy, int sx, int sy, int px, int py, int osx, int osy){
@@ -45,7 +45,7 @@ __global__ void convolution2d_channel(float *input, float *kernel, float *output
         0<=ix && ix<isx && // check if the input x position is valid
         0<=iy && iy<isy   )// check if the input y position is valid
     {
-        output[kc_*osx*osy + ox_*osx + oy_] += input[ic_*isx*isy + ix*isx + iy] * kernel[kc_*ksx*ksy + kx_*ksx + ky_];
+        atomicAdd(&output[kc_*osx*osy + ox_*osx + oy_], input[ic_*isx*isy + ix*isx + iy] * kernel[kc_*ksx*ksy + kx_*ksx + ky_]);
     }
 }
 
@@ -89,7 +89,7 @@ void convolution2d(float *input, float *output, float *kernels, int input_channe
     cudaMemcpy( input_cuda,   input,                    input_channels *  input_size_x *  input_size_y * sizeof(float), cudaMemcpyHostToDevice);
     cudaMemcpy(kernel_cuda, kernels,  kernel_channels * input_channels * kernel_size_x * kernel_size_y * sizeof(float), cudaMemcpyHostToDevice);
 
-    convolution2d_channel<<<dim3(kernel_channels, output_size_x, output_size_y), dim3(kernel_channels, kernel_size_x, kernel_size_y)>>>(
+    convolution2d_channel<<<dim3(output_size_x, output_size_y, kernel_channels), dim3(kernel_size_x, kernel_size_y, input_channels)>>>(
         input_cuda,
         kernel_cuda,
         output_cuda,
