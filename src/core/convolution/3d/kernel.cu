@@ -128,7 +128,7 @@ extern "C" void convolve3d(
         input_size_x  , input_size_y   , input_size_z ,
         kernel_size_x , kernel_size_y  , kernel_size_z,
         output_size_x , output_size_y  , output_size_z,
-        stride_x+1    , stride_y+1     , stride_z+1   ,
+        stride_x      , stride_y       , stride_z     ,
         padding_x     , padding_y      , padding_z
     );
 

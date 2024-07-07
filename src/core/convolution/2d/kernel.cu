@@ -3,6 +3,8 @@
 
 #include <cuda_runtime.h>
 
+#include <stdio.h>
+
 /**
  * @brief This is the kernel function for the convolution operation.
  *
@@ -33,12 +35,12 @@ __global__ void convolution2d_channel(
 )
 {
     
-    int kx_ = threadIdx.x; // kernel x position
-    int ky_ = threadIdx.y; // kernel y position
-    int ic_ = threadIdx.z; // input channel
     int ox_ = blockIdx.x; // target x position in the output
     int oy_ = blockIdx.y; // target y position in the output
     int kc_ = blockIdx.z; // kernel/output channel
+    int kx_ = threadIdx.x; // kernel x position
+    int ky_ = threadIdx.y; // kernel y position
+    int ic_ = threadIdx.z; // input channel
 
     int ix = ox_-px + kx_*sx; // input x position
     int iy = oy_-py + ky_*sy; // input y position
@@ -111,7 +113,7 @@ extern "C" void convolve2d(
         input_size_x  , input_size_y   ,
         kernel_size_x , kernel_size_y,
         output_size_x , output_size_y,
-        stride_x+1    , stride_y+1   ,
+        stride_x      , stride_y     ,
         padding_x     , padding_y
     );
 

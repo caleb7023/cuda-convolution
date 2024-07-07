@@ -55,7 +55,7 @@ def convolve1d(input:np.ndarray, kernel:np.ndarray, padding:int=0, stride:int=0)
 
 
 
-def convolve2d(input:np.ndarray, kernel:np.ndarray, padding:int|tuple[int]=0, stride:int|tuple[int]=0) -> np.ndarray:
+def convolve2d(input:np.ndarray, kernel:np.ndarray, padding:int|tuple[int]=0, stride:int|tuple[int]=1) -> np.ndarray:
 
     """
     # convolve1d
@@ -100,17 +100,17 @@ def convolve2d(input:np.ndarray, kernel:np.ndarray, padding:int|tuple[int]=0, st
     
     # Set the stride
     if isinstance(stride, int):
-        if stride < 0:
-            raise ValueError("The stride must be a positive integer (%d was gaven)" % stride)
+        if stride < 1:
+            raise ValueError("The stride must be greater than 1 (%d was gaven)" % stride)
         stride_x = stride
         stride_y = stride
     elif isinstance(stride, (tuple, list)):
         stride_x = stride[0]
         stride_y = stride[1]
-        if stride_x < 0:
-            raise ValueError("x's stride must be a psitive integer (%d was gaven)" % stride_x)
-        if stride_y < 0:
-            raise ValueError("y's stride must be a psitive integer (%d was gaven)" % stride_y)
+        if stride_x < 1:
+            raise ValueError("x's stride must be greater than 1 (%d was gaven)" % stride_x)
+        if stride_y < 1:
+            raise ValueError("y's stride must be greater than 1 (%d was gaven)" % stride_y)
     else: 
         raise ValueError("The stride must be an integer or a tuple of integers")
 
@@ -123,8 +123,9 @@ def convolve2d(input:np.ndarray, kernel:np.ndarray, padding:int|tuple[int]=0, st
         raise ValueError("The input's channel and kernel's input channel must have the same size")
     
     # Create the output array for storing the output
-    output_size_x = (input.shape[1] - kernel.shape[2] + 1 + 2 * padding_x) // (stride_x + 1)
-    output_size_y = (input.shape[2] - kernel.shape[3] + 1 + 2 * padding_y) // (stride_y + 1)
+    output_size_x = (input.shape[1] - kernel.shape[2] + 1 + 2 * padding_x) // stride_x 
+    output_size_y = (input.shape[2] - kernel.shape[3] + 1 + 2 * padding_y) // stride_y
+    print(output_size_x, output_size_y)
     output = np.zeros((kernel.shape[0], output_size_x, output_size_y), dtype=np.float32)
 
     # Calulate the output and store it in the output array

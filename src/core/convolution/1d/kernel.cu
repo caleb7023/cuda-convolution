@@ -88,7 +88,7 @@ extern "C" void convolve1d(
         input_cuda    , kernel_cuda    , output_cuda,
         input_channels, kernel_channels,
         input_size    , kernel_size    , output_size,
-        stride+1      , padding
+        stride        , padding
     );
 
     cudaMemcpy(output, output_cuda, kernel_channels * output_size * sizeof(float), cudaMemcpyDeviceToHost);
