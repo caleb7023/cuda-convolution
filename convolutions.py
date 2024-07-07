@@ -123,8 +123,8 @@ def convolve2d(input:np.ndarray, kernel:np.ndarray, padding:int|tuple[int]=0, st
         raise ValueError("The input's channel and kernel's input channel must have the same size")
     
     # Create the output array for storing the output
-    output_size_x = (input.shape[1] - kernel.shape[2] + 2 * padding_x) // (stride_x + 1)
-    output_size_y = (input.shape[2] - kernel.shape[3] + 2 * padding_y) // (stride_y + 1)
+    output_size_x = (input.shape[1] - kernel.shape[2] + 1 + 2 * padding_x) // (stride_x + 1)
+    output_size_y = (input.shape[2] - kernel.shape[3] + 1 + 2 * padding_y) // (stride_y + 1)
     output = np.zeros((kernel.shape[0], output_size_x, output_size_y), dtype=np.float32)
 
     # Calulate the output and store it in the output array
