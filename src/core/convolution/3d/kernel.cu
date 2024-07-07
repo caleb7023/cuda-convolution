@@ -3,8 +3,6 @@
 
 #include <cuda_runtime.h>
 
-#include <stdio.h>
-
 // Its 3D!
 
 /**
@@ -104,21 +102,18 @@ __global__ void convolution3d_channel(
  * @param padding_z The padding in the z direction.
  *
  */
-void convolution3d(
+extern "C" void convolve3d(
     float *input, float *output, float *kernels,
     int input_channels, int kernel_channels,
     int input_size_x  , int input_size_y   , int input_size_z ,
     int kernel_size_x , int kernel_size_y  , int kernel_size_z,
+    int output_size_x , int output_size_y  , int output_size_z,
     int stride_x      , int stride_y       , int stride_z     ,
     int padding_x     , int padding_y      , int padding_z
 )
 {
 
     float *input_cuda, *kernel_cuda, *output_cuda;
-
-    int output_size_x = static_cast<int>((input_size_x - kernel_size_x + padding_x*2) / (stride_x+1)) + 1;
-    int output_size_y = static_cast<int>((input_size_y - kernel_size_y + padding_y*2) / (stride_y+1)) + 1;
-    int output_size_z = static_cast<int>((input_size_z - kernel_size_z + padding_z*2) / (stride_z+1)) + 1;
 
     cudaMalloc(& input_cuda,                    input_channels *  input_size_x *  input_size_y *  input_size_y * sizeof(float));
     cudaMalloc(&kernel_cuda,  kernel_channels * input_channels * kernel_size_x * kernel_size_y * kernel_size_y * sizeof(float));

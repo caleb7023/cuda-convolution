@@ -1,9 +1,9 @@
-
 // author: caleb7023
 
-#include <cuda_runtime.h>
+#ifndef CONVOLUTION1D_CUH
+#define CONVOLUTION1D_CUH
 
-#include <stdio.h>
+#include <cuda_runtime.h>
 
 /**
  * @brief This is the kernel function for the convolution operation.
@@ -19,7 +19,7 @@
  * @param p: padding
  * @param os: output size
  */
-__global__ void convolution1d_channel(
+__global__ void convolution1d_ch(
     float *input, float *kernel, float *output,
     int ic, int kc,
     int is, int ks, int os,
@@ -67,17 +67,15 @@ __global__ void convolution1d_channel(
  * @param padding The padding.
  *
  */
-void convolution1d(
+extern "C" void convolve1d(
     float *input, float *output, float *kernels,
     int input_channels, int kernel_channels,
-    int input_size    , int kernel_size,
+    int input_size    , int kernel_size, int output_size,
     int stride        , int padding
 )
 {
 
     float *input_cuda, *kernel_cuda, *output_cuda;
-
-    int output_size = static_cast<int>((input_size - kernel_size + padding*2) / (stride+1)) + 1;
 
     cudaMalloc(& input_cuda,                    input_channels *  input_size * sizeof(float));
     cudaMalloc(&kernel_cuda,  kernel_channels * input_channels * kernel_size * sizeof(float));
@@ -86,7 +84,7 @@ void convolution1d(
     cudaMemcpy( input_cuda,   input,                    input_channels *  input_size * sizeof(float), cudaMemcpyHostToDevice);
     cudaMemcpy(kernel_cuda, kernels,  kernel_channels * input_channels * kernel_size * sizeof(float), cudaMemcpyHostToDevice);
 
-    convolution1d_channel<<<dim3(output_size, kernel_channels), dim3(kernel_size, input_channels)>>>(
+    convolution1d_ch<<<dim3(output_size, kernel_channels), dim3(kernel_size, input_channels)>>>(
         input_cuda    , kernel_cuda    , output_cuda,
         input_channels, kernel_channels,
         input_size    , kernel_size    , output_size,
@@ -100,3 +98,5 @@ void convolution1d(
     cudaFree(kernel_cuda);
 
 }
+
+#endif

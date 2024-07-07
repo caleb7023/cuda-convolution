@@ -3,9 +3,6 @@
 
 #include <cuda_runtime.h>
 
-#include <stdio.h>
-
-
 /**
  * @brief This is the kernel function for the convolution operation.
  *
@@ -88,21 +85,19 @@ __global__ void convolution2d_channel(
  * @param padding_y The padding in the y direction.
  *
  */
-void convolution2d(
+extern "C" void convolve2d(
     float *input, float *output, float *kernels,
     int input_channels, int kernel_channels,
     int input_size_x  , int input_size_y   ,
     int kernel_size_x , int kernel_size_y  ,
+    int output_size_x , int output_size_y  ,
     int stride_x      , int stride_y       ,
     int padding_x     , int padding_y
 )
 {
 
     float *input_cuda, *kernel_cuda, *output_cuda;
-
-    int output_size_x = static_cast<int>((input_size_x - kernel_size_x + padding_x*2) / (stride_x+1)) + 1;
-    int output_size_y = static_cast<int>((input_size_y - kernel_size_y + padding_y*2) / (stride_y+1)) + 1;
-
+    
     cudaMalloc(& input_cuda,                    input_channels *  input_size_x *  input_size_y * sizeof(float));
     cudaMalloc(&kernel_cuda,  kernel_channels * input_channels * kernel_size_x * kernel_size_y * sizeof(float));
     cudaMalloc(&output_cuda,  kernel_channels *                  output_size_x * output_size_y * sizeof(float));
@@ -113,7 +108,7 @@ void convolution2d(
     convolution2d_channel<<<dim3(output_size_x, output_size_y, kernel_channels), dim3(kernel_size_x, kernel_size_y, input_channels)>>>(
         input_cuda    , kernel_cuda    , output_cuda,
         input_channels, kernel_channels,
-        input_size_x , input_size_y   ,
+        input_size_x  , input_size_y   ,
         kernel_size_x , kernel_size_y,
         output_size_x , output_size_y,
         stride_x+1    , stride_y+1   ,
