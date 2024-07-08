@@ -66,8 +66,8 @@ __global__ void convolution3d_ch(
         0<=iz && iz<isz)   // check if the input z position is valid
     {
         atomicAdd(
-            &output[kc_*osx*osy*osz + ox_*osx*osy + oy_*osy + oz_],
-              input[ic_*isx*isy*isz + ix *isx*isy + iy *isy + iz ] * kernel[kc_*ic*ksx*ksy*ksz + ic_*ksx*ksy*ksz + kx_*ksx*ksy + ky_*ksy + kz_]
+            &output[kc_*osx*osy*osz + ox_*osz*osy + oy_*osx + oz_],
+              input[ic_*isx*isy*isz + ix *isz*isy + iy *isx + iz ] * kernel[kc_*ic*ksx*ksy*ksz + ic_*ksx*ksy*ksz + kx_*ksx*ksy + ky_*ksy + kz_]
         );
     }
 
