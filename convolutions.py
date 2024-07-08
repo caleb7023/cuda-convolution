@@ -58,7 +58,7 @@ def convolve1d(input:np.ndarray, kernel:np.ndarray, padding:int=0, stride:int=0)
 def convolve2d(input:np.ndarray, kernel:np.ndarray, padding:int|tuple[int]=0, stride:int|tuple[int]=1) -> np.ndarray:
 
     """
-    # convolve1d
+    # convolve2d
 
     This function convolves a 2D input with channel with a 2D kernel with input and kernel channels.
 
@@ -92,9 +92,9 @@ def convolve2d(input:np.ndarray, kernel:np.ndarray, padding:int|tuple[int]=0, st
         padding_x = padding[0]
         padding_y = padding[1]
         if padding_x < 0:
-            raise ValueError("x's padding must be a psitive integer (%d was gaven)" % padding_x)
+            raise ValueError("x's padding must be a positive integer (%d was gaven)" % padding_x)
         if padding_y < 0:
-            raise ValueError("y's padding must be a psitive integer (%d was gaven)" % padding_y)
+            raise ValueError("y's padding must be a positive integer (%d was gaven)" % padding_y)
     else: 
         raise ValueError("The padding must be an integer or a tuple of integers")
     
@@ -125,7 +125,6 @@ def convolve2d(input:np.ndarray, kernel:np.ndarray, padding:int|tuple[int]=0, st
     # Create the output array for storing the output
     output_size_x = (input.shape[1] - kernel.shape[2] + 1 + 2 * padding_x) // stride_x 
     output_size_y = (input.shape[2] - kernel.shape[3] + 1 + 2 * padding_y) // stride_y
-    print(output_size_x, output_size_y)
     output = np.zeros((kernel.shape[0], output_size_x, output_size_y), dtype=np.float32)
 
     # Calulate the output and store it in the output array
