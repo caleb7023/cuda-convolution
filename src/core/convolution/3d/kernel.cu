@@ -29,7 +29,7 @@
  * @param py: padding y
  * @param pz: padding z
  */
-__global__ void convolution3d_channel(
+__global__ void convolution3d_ch(
     float *input, float *kernel, float *output,
     int ic , int kc ,
     int isx, int isy, int isz,
@@ -122,7 +122,7 @@ extern "C" void convolve3d(
     cudaMemcpy( input_cuda,   input,                    input_channels *  input_size_x *  input_size_y *  input_size_z * sizeof(float), cudaMemcpyHostToDevice);
     cudaMemcpy(kernel_cuda, kernels,  kernel_channels * input_channels * kernel_size_x * kernel_size_y * kernel_size_z * sizeof(float), cudaMemcpyHostToDevice);
 
-    convolution3d_channel<<<dim3(output_size_x*output_size_y, output_size_z, kernel_channels), dim3(kernel_size_x*kernel_size_y, kernel_size_z, input_channels)>>>(
+    convolution3d_ch<<<dim3(output_size_x*output_size_y, output_size_z, kernel_channels), dim3(kernel_size_x*kernel_size_y, kernel_size_z, input_channels)>>>(
         input_cuda    , kernel_cuda    , output_cuda,
         input_channels, kernel_channels,
         input_size_x  , input_size_y   , input_size_z ,

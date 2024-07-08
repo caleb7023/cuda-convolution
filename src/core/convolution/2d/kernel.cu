@@ -24,7 +24,7 @@
  * @param osx: output size x
  * @param osy: output size y
  */
-__global__ void convolution2d_channel(
+__global__ void convolution2d_ch(
     float *input, float *kernel, float *output,
     int ic , int kc ,
     int isx, int isy,
@@ -45,18 +45,20 @@ __global__ void convolution2d_channel(
     int ix = ox_-px + kx_*sx; // input x position
     int iy = oy_-py + ky_*sy; // input y position
 
-    if (kc_ < kc  && // kernel channel
+    if (
+        kc_ < kc  && // kernel channel
         oy_ < osy && // target y position in the input
         ox_ < osx && // target x position in the input
         ic_ < ic  && // input channel
         ky_ < ksy && // kernel y position
         kx_ < ksx && // kernel x position
         0<=ix && ix<isx && // check if the input x position is valid
-        0<=iy && iy<isy   )// check if the input y position is valid
+        0<=iy && iy<isy    // check if the input y position is valid
+    )
     {
         atomicAdd(
-            &output[kc_*osx*osy + ox_*osx + oy_],
-             input [ic_*isx*isy + ix *isx + iy ] * kernel[kc_*ic*ksx*ksy + ic_*ksx*ksy + kx_*ksx + ky_]
+            &output[kc_*osx*osy + ox_*osy+ oy_],
+             input[ic_*isx*isy + ix*isy+ iy] * kernel[kc_*ic*ksx*ksy + ic_*ksx*ksy + kx_*ksx + ky_]
         );
     }
 
@@ -107,7 +109,7 @@ extern "C" void convolve2d(
     cudaMemcpy( input_cuda,   input,                    input_channels *  input_size_x *  input_size_y * sizeof(float), cudaMemcpyHostToDevice);
     cudaMemcpy(kernel_cuda, kernels,  kernel_channels * input_channels * kernel_size_x * kernel_size_y * sizeof(float), cudaMemcpyHostToDevice);
 
-    convolution2d_channel<<<dim3(output_size_x, output_size_y, kernel_channels), dim3(kernel_size_x, kernel_size_y, input_channels)>>>(
+    convolution2d_ch<<<dim3(output_size_x, output_size_y, kernel_channels), dim3(kernel_size_x, kernel_size_y, input_channels)>>>(
         input_cuda    , kernel_cuda    , output_cuda,
         input_channels, kernel_channels,
         input_size_x  , input_size_y   ,

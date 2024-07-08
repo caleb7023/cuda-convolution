@@ -3,6 +3,8 @@
 #include <pybind11/pybind11.h>
 #include <pybind11/numpy.h>
 
+#include <stdio.h>
+
 extern "C" void convolve1d(
     float *input, float *output, float *kernels,
     int input_channels, int kernel_channels,
