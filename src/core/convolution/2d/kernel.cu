@@ -58,7 +58,7 @@ __global__ void convolution2d_ch(
     {
         atomicAdd(
             &output[kc_*osx*osy + ox_*osy+ oy_],
-             input[ic_*isx*isy + ix*isy+ iy] * kernel[kc_*ic*ksx*ksy + ic_*ksx*ksy + kx_*ksx + ky_]
+             input[ic_*isx*isy + ix*isy+ iy] * kernel[kc_*ic*ksx*ksy + ic_*ksx*ksy + kx_*ksy + ky_]
         );
     }
 

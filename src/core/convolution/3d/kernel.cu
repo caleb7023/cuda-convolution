@@ -67,7 +67,7 @@ __global__ void convolution3d_ch(
     {
         atomicAdd(
             &output[kc_*osx*osy*osz + ox_*osz*osy + oy_*osx + oz_],
-              input[ic_*isx*isy*isz + ix *isz*isy + iy *isx + iz ] * kernel[kc_*ic*ksx*ksy*ksz + ic_*ksx*ksy*ksz + kx_*ksx*ksy + ky_*ksy + kz_]
+              input[ic_*isx*isy*isz + ix *isz*isy + iy *isx + iz ] * kernel[kc_*ic*ksx*ksy*ksz + ic_*ksx*ksy*ksz + kx_*ksz*ksy + ky_*ksz + kz_]
         );
     }
 
