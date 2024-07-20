@@ -3,74 +3,87 @@
 #include <pybind11/pybind11.h>
 #include <pybind11/numpy.h>
 
-#include <stdio.h>
 
 extern "C" void convolve1d(
-    float *input, float *output, float *kernels,
-    int input_channels, int kernel_channels,
-    int input_size    , int kernel_size, int output_size,
-    int stride        , int padding
+    const float *input, float *output, const float *kernels,
+    unsigned int input_channels, unsigned int kernel_channels,
+    unsigned int input_size    , unsigned int kernel_size, unsigned int output_size,
+    unsigned int stride        , unsigned int padding
 );
 
 extern "C" void convolve2d(
-    float *input, float *output, float *kernels,
-    int input_channels, int kernel_channels,
-    int input_size_x  , int input_size_y   ,
-    int kernel_size_x , int kernel_size_y  ,
-    int output_size_x , int output_size_y  ,
-    int stride_x      , int stride_y       ,
-    int padding_x     , int padding_y
+    const float *input, float *output, const float *kernels,
+    unsigned int input_channels, unsigned int kernel_channels,
+    unsigned int input_size_x  , unsigned int input_size_y   ,
+    unsigned int kernel_size_x , unsigned int kernel_size_y  ,
+    unsigned int output_size_x , unsigned int output_size_y  ,
+    unsigned int stride_x      , unsigned int stride_y       ,
+    unsigned int padding_x     , unsigned int padding_y
 );
 
 extern "C" void convolve3d(
-    float *input, float *output, float *kernels,
-    int input_channels, int kernel_channels,
-    int input_size_x  , int input_size_y   , int input_size_z ,
-    int kernel_size_x , int kernel_size_y  , int kernel_size_z,
-    int output_size_x , int output_size_y  , int output_size_z,
-    int stride_x      , int stride_y       , int stride_z     ,
-    int padding_x     , int padding_y      , int padding_z
+    const float *input, float *output, const float *kernels,
+    unsigned int input_channels, unsigned int kernel_channels,
+    unsigned int input_size_x  , unsigned int input_size_y   , unsigned int input_size_z ,
+    unsigned int kernel_size_x , unsigned int kernel_size_y  , unsigned int kernel_size_z,
+    unsigned int output_size_x , unsigned int output_size_y  , unsigned int output_size_z,
+    unsigned int stride_x      , unsigned int stride_y       , unsigned int stride_z     ,
+    unsigned int padding_x     , unsigned int padding_y      , unsigned int padding_z
 );
 
 namespace py = pybind11;
 
-void convolve1d_py(py::array_t<float> input_arr, py::array_t<float> kernel_arr, py::array_t<float> output_arr, int padding, int stride) {
+void convolve1d_py(
+    const py::array_t<float>& input_arr,
+    const py::array_t<float>& kernel_arr,
+    const py::array_t<float>& output_arr,
+    const unsigned int padding,
+    const unsigned int stride
+)
+{
     
-    py::buffer_info  input_buf =  input_arr.request();
-    py::buffer_info kernel_buf = kernel_arr.request();
-    py::buffer_info output_buf = output_arr.request();
+    const py::buffer_info input_buf =  input_arr.request();
+    const py::buffer_info kernel_buf = kernel_arr.request();
+    const py::buffer_info output_buf = output_arr.request();
 
-    float *input   = static_cast<float *>( input_buf.ptr);
-    float *kernels = static_cast<float *>(kernel_buf.ptr);
-    float *output  = static_cast<float *>(output_buf.ptr);
+    const float *input   = static_cast<float*>( input_buf.ptr);
+    const float *kernels = static_cast<float*>(kernel_buf.ptr);
+    auto         output  = static_cast<float*>(output_buf.ptr);
 
-    int input_channels  =  input_buf.shape[0];
-    int kernel_channels = kernel_buf.shape[0];
-    int input_size      =  input_buf.shape[1];
-    int kernel_size     = kernel_buf.shape[2];
-    int output_size     = output_buf.shape[1];
+    const unsigned int input_channels  =  input_buf.shape[0];
+    const unsigned int kernel_channels = kernel_buf.shape[0];
+    const unsigned int input_size      =  input_buf.shape[1];
+    const unsigned int kernel_size     = kernel_buf.shape[2];
+    const unsigned int output_size     = output_buf.shape[1];
 
     convolve1d(input, output, kernels, input_channels, kernel_channels, input_size, kernel_size, output_size, stride, padding);
 }
 
-void convolve2d_py(py::array_t<float> input_arr, py::array_t<float> kernel_arr, py::array_t<float> output_arr, int padding_x, int padding_y, int stride_x, int stride_y) {
+void convolve2d_py(
+    const py::array_t<float>& input_arr,
+    const py::array_t<float>& kernel_arr,
+    const py::array_t<float>& output_arr,
+    const unsigned int padding_x, const unsigned int padding_y,
+    const unsigned int stride_x , const unsigned int stride_y
+)
+{
     
-    py::buffer_info  input_buf =  input_arr.request();
-    py::buffer_info kernel_buf = kernel_arr.request();
-    py::buffer_info output_buf = output_arr.request();
+    const py::buffer_info  input_buf =  input_arr.request();
+    const py::buffer_info kernel_buf = kernel_arr.request();
+    const py::buffer_info output_buf = output_arr.request();
 
-    float *input   = static_cast<float *>( input_buf.ptr);
-    float *kernels = static_cast<float *>(kernel_buf.ptr);
-    float *output  = static_cast<float *>(output_buf.ptr);
+    const float *input   = static_cast<float*>( input_buf.ptr);
+    const float *kernels = static_cast<float*>(kernel_buf.ptr);
+    auto         output  = static_cast<float*>(output_buf.ptr);
 
-    int input_channels  =  input_buf.shape[0];
-    int kernel_channels = kernel_buf.shape[0];
-    int input_size_x    =  input_buf.shape[1];
-    int kernel_size_x   = kernel_buf.shape[2];
-    int output_size_x   = output_buf.shape[1];
-    int input_size_y    =  input_buf.shape[2];
-    int kernel_size_y   = kernel_buf.shape[3];
-    int output_size_y   = output_buf.shape[2];
+    const unsigned int input_channels  =  input_buf.shape[0];
+    const unsigned int kernel_channels = kernel_buf.shape[0];
+    const unsigned int input_size_x    =  input_buf.shape[1];
+    const unsigned int kernel_size_x   = kernel_buf.shape[2];
+    const unsigned int output_size_x   = output_buf.shape[1];
+    const unsigned int input_size_y    =  input_buf.shape[2];
+    const unsigned int kernel_size_y   = kernel_buf.shape[3];
+    const unsigned int output_size_y   = output_buf.shape[2];
 
     convolve2d(
         input, output, kernels, 
@@ -79,31 +92,39 @@ void convolve2d_py(py::array_t<float> input_arr, py::array_t<float> kernel_arr, 
         kernel_size_x , kernel_size_y  ,
         output_size_x , output_size_y  ,
         stride_x      , stride_y       , 
-        padding_y     , padding_y
+        padding_x     , padding_y
     );
 }
 
-void convolve3d_py(py::array_t<float> input_arr, py::array_t<float> kernel_arr, py::array_t<float> output_arr, int padding_x, int padding_y, int padding_z, int stride_x, int stride_y, int stride_z) {
+void convolve3d_py(
+    const py::array_t<float>& input_arr,
+    const py::array_t<float>& kernel_arr,
+    const py::array_t<float>& output_arr,
+    const unsigned int padding_x, const unsigned int padding_y,
+    const unsigned int padding_z, const unsigned int stride_x,
+    const unsigned int stride_y,  const unsigned int stride_z
+)
+{
     
-    py::buffer_info  input_buf =  input_arr.request();
-    py::buffer_info kernel_buf = kernel_arr.request();
-    py::buffer_info output_buf = output_arr.request();
+    const py::buffer_info  input_buf =  input_arr.request();
+    const py::buffer_info kernel_buf = kernel_arr.request();
+    const py::buffer_info output_buf = output_arr.request();
 
-    float *input   = static_cast<float *>( input_buf.ptr);
-    float *kernels = static_cast<float *>(kernel_buf.ptr);
-    float *output  = static_cast<float *>(output_buf.ptr);
+    const float *input   = static_cast<float*>( input_buf.ptr);
+    const float *kernels = static_cast<float*>(kernel_buf.ptr);
+    auto         output  = static_cast<float*>(output_buf.ptr);
 
-    int input_channels  =  input_buf.shape[0];
-    int kernel_channels = kernel_buf.shape[0];
-    int input_size_x    =  input_buf.shape[1];
-    int kernel_size_x   = kernel_buf.shape[2];
-    int output_size_x   = output_buf.shape[1];
-    int input_size_y    =  input_buf.shape[2];
-    int kernel_size_y   = kernel_buf.shape[3];
-    int output_size_y   = output_buf.shape[2];
-    int input_size_z    =  input_buf.shape[3];
-    int kernel_size_z   = kernel_buf.shape[4];
-    int output_size_z   = output_buf.shape[3];
+    const unsigned int input_channels  =  input_buf.shape[0];
+    const unsigned int kernel_channels = kernel_buf.shape[0];
+    const unsigned int input_size_x    =  input_buf.shape[1];
+    const unsigned int kernel_size_x   = kernel_buf.shape[2];
+    const unsigned int output_size_x   = output_buf.shape[1];
+    const unsigned int input_size_y    =  input_buf.shape[2];
+    const unsigned int kernel_size_y   = kernel_buf.shape[3];
+    const unsigned int output_size_y   = output_buf.shape[2];
+    const unsigned int input_size_z    =  input_buf.shape[3];
+    const unsigned int kernel_size_z   = kernel_buf.shape[4];
+    const unsigned int output_size_z   = output_buf.shape[3];
 
     convolve3d(
         input, output, kernels, 

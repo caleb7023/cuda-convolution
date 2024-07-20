@@ -2,6 +2,7 @@ cmake_minimum_required(VERSION 3.20)
 project(cuda_convolution LANGUAGES CXX CUDA)
 
 cmake_policy(SET CMP0104 OLD)
+cmake_policy(SET CMP0146 OLD)
 
 set(pybind11_DIR "~/anaconda3/lib/python3.12/site-packages/pybind11/share/cmake/pybind11")
 

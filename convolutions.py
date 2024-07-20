@@ -128,7 +128,11 @@ def convolve2d(input:np.ndarray, kernel:np.ndarray, padding:int|tuple[int]=0, st
     output = np.zeros((kernel.shape[0], output_size_x, output_size_y), dtype=np.float32)
 
     # Calulate the output and store it in the output array
-    __conv.convolve2d_py(input.astype(np.float32), kernel.astype(np.float32), output, padding_x, padding_y, stride_x, stride_y)
+    __conv.convolve2d_py(
+        input.astype(np.float32), kernel.astype(np.float32), output,
+        padding_x, padding_y,
+        stride_x, stride_y
+    )
 
     # Return the output
     return output

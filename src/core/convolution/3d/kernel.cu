@@ -30,28 +30,28 @@
  * @param pz: padding z
  */
 __global__ void convolution3d_ch(
-    float *input, float *kernel, float *output,
-    int ic , int kc ,
-    int isx, int isy, int isz,
-    int ksx, int ksy, int ksz,
-    int osx, int osy, int osz,
-    int sx , int sy , int sz ,
-    int px , int py , int pz
+    const float *input, const float *kernel, float *output,
+    const unsigned int ic , const unsigned int kc ,
+    const unsigned int isx, const unsigned int isy, const unsigned int isz,
+    const unsigned int ksx, const unsigned int ksy, const unsigned int ksz,
+    const unsigned int osx, const unsigned int osy, const unsigned int osz,
+    const unsigned int sx , const unsigned int sy , const unsigned int sz ,
+    const unsigned int px , const unsigned int py , const unsigned int pz
 )
 {
     
-    int kx_ = threadIdx.x/ksx; // kernel x position
-    int ky_ = threadIdx.x%ksx; // kernel y position
-    int kz_ = threadIdx.y; // kernel z position
-    int ic_ = threadIdx.z; // input channel
-    int ox_ = blockIdx.x/osx; // target x position in the output
-    int oy_ = blockIdx.x%osx; // target y position in the output
-    int oz_ = blockIdx.y; // target z position in the output
-    int kc_ = blockIdx.z; // kernel/output channel
+    const unsigned int kx_ = threadIdx.x/ksx; // kernel x position
+    const unsigned int ky_ = threadIdx.x%ksx; // kernel y position
+    const unsigned int kz_ = threadIdx.y; // kernel z position
+    const unsigned int ic_ = threadIdx.z; // input channel
+    const unsigned int ox_ = blockIdx.x/osx; // target x position in the output
+    const unsigned int oy_ = blockIdx.x%osx; // target y position in the output
+    const unsigned int oz_ = blockIdx.y; // target z position in the output
+    const unsigned int kc_ = blockIdx.z; // kernel/output channel
 
-    int ix = ox_-px + kx_*sx; // input x position
-    int iy = oy_-py + ky_*sy; // input y position
-    int iz = oz_-pz + kz_*sz; // input z position
+    const int ix = ox_-px + kx_*sx; // input x position
+    const int iy = oy_-py + ky_*sy; // input y position
+    const int iz = oz_-pz + kz_*sz; // input z position
 
     if (kc_ < kc  && // kernel channel
         oy_ < osy && // target y position in the input
@@ -103,13 +103,13 @@ __global__ void convolution3d_ch(
  *
  */
 extern "C" void convolve3d(
-    float *input, float *output, float *kernels,
-    int input_channels, int kernel_channels,
-    int input_size_x  , int input_size_y   , int input_size_z ,
-    int kernel_size_x , int kernel_size_y  , int kernel_size_z,
-    int output_size_x , int output_size_y  , int output_size_z,
-    int stride_x      , int stride_y       , int stride_z     ,
-    int padding_x     , int padding_y      , int padding_z
+    const float *input, float *output, const float *kernels,
+    const unsigned int input_channels, const unsigned int kernel_channels,
+    const unsigned int input_size_x  , const unsigned int input_size_y   , const unsigned int input_size_z ,
+    const unsigned int kernel_size_x , const unsigned int kernel_size_y  , const unsigned int kernel_size_z,
+    const unsigned int output_size_x , const unsigned int output_size_y  , const unsigned int output_size_z,
+    const unsigned int stride_x      , const unsigned int stride_y       , const unsigned int stride_z     ,
+    const unsigned int padding_x     , const unsigned int padding_y      , const unsigned int padding_z
 )
 {
 

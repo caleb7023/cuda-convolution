@@ -1,7 +1,5 @@
-// author: caleb7023
 
-#ifndef CONVOLUTION1D_CUH
-#define CONVOLUTION1D_CUH
+// author: caleb7023
 
 #include <cuda_runtime.h>
 
@@ -20,19 +18,19 @@
  * @param os: output size
  */
 __global__ void convolution1d_ch(
-    float *input, float *kernel, float *output,
-    int ic, int kc,
-    int is, int ks, int os,
-    int s , int p
+    const float *input, const float *kernel, float *output,
+    const unsigned int ic, const  unsigned int kc,
+    const unsigned int is, const  unsigned int ks, const unsigned int os,
+    const unsigned int s , const  unsigned int p
 )
 {
     
-    int  k_ = threadIdx.x; // kernel position
-    int ic_ = threadIdx.y; // input channel
-    int  o_ = blockIdx.x; // target position in the output
-    int kc_ = blockIdx.y; // kernel/output channel
+    const unsigned int  k_ = threadIdx.x; // kernel position
+    const unsigned int ic_ = threadIdx.y; // input channel
+    const unsigned int  o_ = blockIdx.x; // target position in the output
+    const unsigned int kc_ = blockIdx.y; // kernel/output channel
 
-    int i = o_-p + k_*s; // input position
+    const int i = o_-p + k_*s; // input position
 
     if (kc_ < kc && // kernel channel
          o_ < os && // target position in the input
@@ -68,10 +66,10 @@ __global__ void convolution1d_ch(
  *
  */
 extern "C" void convolve1d(
-    float *input, float *output, float *kernels,
-    int input_channels, int kernel_channels,
-    int input_size    , int kernel_size, int output_size,
-    int stride        , int padding
+    const float *input, float *output, const float *kernels,
+    const unsigned int input_channels, const unsigned int kernel_channels,
+    const unsigned int input_size    , const unsigned int kernel_size,     const unsigned int output_size,
+    const unsigned int stride        , const unsigned int padding
 )
 {
 
@@ -98,5 +96,3 @@ extern "C" void convolve1d(
     cudaFree(kernel_cuda);
 
 }
-
-#endif

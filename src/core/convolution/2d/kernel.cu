@@ -3,7 +3,6 @@
 
 #include <cuda_runtime.h>
 
-#include <stdio.h>
 
 /**
  * @brief This is the kernel function for the convolution operation.
@@ -25,25 +24,25 @@
  * @param osy: output size y
  */
 __global__ void convolution2d_ch(
-    float *input, float *kernel, float *output,
-    int ic , int kc ,
-    int isx, int isy,
-    int ksx, int ksy,
-    int osx, int osy,
-    int sx , int sy ,
-    int px , int py
+    const float *input, const float *kernel, float *output,
+    const unsigned int ic , const unsigned int kc ,
+    const unsigned int isx, const unsigned int isy,
+    const unsigned int ksx, const unsigned int ksy,
+    const unsigned int osx, const unsigned int osy,
+    const unsigned int sx , const unsigned int sy ,
+    const unsigned int px , const unsigned int py
 )
 {
     
-    int ox_ = blockIdx.x; // target x position in the output
-    int oy_ = blockIdx.y; // target y position in the output
-    int kc_ = blockIdx.z; // kernel/output channel
-    int kx_ = threadIdx.x; // kernel x position
-    int ky_ = threadIdx.y; // kernel y position
-    int ic_ = threadIdx.z; // input channel
+    const unsigned int ox_ = blockIdx.x; // target x position in the output
+    const unsigned int oy_ = blockIdx.y; // target y position in the output
+    const unsigned int kc_ = blockIdx.z; // kernel/output channel
+    const unsigned int kx_ = threadIdx.x; // kernel x position
+    const unsigned int ky_ = threadIdx.y; // kernel y position
+    const unsigned int ic_ = threadIdx.z; // input channel
 
-    int ix = ox_-px + kx_*sx; // input x position
-    int iy = oy_-py + ky_*sy; // input y position
+    const int ix = ox_-px + kx_*sx; // input x position
+    const int iy = oy_-py + ky_*sy; // input y position
 
     if (
         kc_ < kc  && // kernel channel
@@ -57,8 +56,8 @@ __global__ void convolution2d_ch(
     )
     {
         atomicAdd(
-            &output[kc_*osx*osy + ox_*osy+ oy_],
-             input[ic_*isx*isy + ix*isy+ iy] * kernel[kc_*ic*ksx*ksy + ic_*ksx*ksy + kx_*ksy + ky_]
+            &output[kc_*osx*osy + ox_*osy + oy_],
+            input[ic_*isx*isy + ix*isy + iy] * kernel[kc_*ic*ksx*ksy + ic_*ksx*ksy + kx_*ksy + ky_]
         );
     }
 
@@ -90,13 +89,13 @@ __global__ void convolution2d_ch(
  *
  */
 extern "C" void convolve2d(
-    float *input, float *output, float *kernels,
-    int input_channels, int kernel_channels,
-    int input_size_x  , int input_size_y   ,
-    int kernel_size_x , int kernel_size_y  ,
-    int output_size_x , int output_size_y  ,
-    int stride_x      , int stride_y       ,
-    int padding_x     , int padding_y
+    const float *input, float *output, const float *kernels,
+    const unsigned int input_channels, const unsigned int kernel_channels,
+    const unsigned int input_size_x  , const unsigned int input_size_y   ,
+    const unsigned int kernel_size_x , const unsigned int kernel_size_y  ,
+    const unsigned int output_size_x , const unsigned int output_size_y  ,
+    const unsigned int stride_x      , const unsigned int stride_y       ,
+    const unsigned int padding_x     , const unsigned int padding_y
 )
 {
 
